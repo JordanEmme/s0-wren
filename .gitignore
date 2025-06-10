@@ -1,0 +1,9 @@
+# clangd
+.cache/
+compile_commands.json
+
+#bin
+s0-wren
+
+#build
+build/
