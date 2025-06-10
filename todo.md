@@ -1,0 +1,5 @@
+- [ ] Make sure the texture does not use any kind of filter
+- [ ] Lock the window to prevent resizes
+- [ ] Ensure constant FPS through VSync
+- [ ] Implement vec maths, cube mesh, cube rotation
+- [ ] Implement texture coord computations (wrong psone model, bilinear filter

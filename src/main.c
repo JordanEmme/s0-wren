@@ -1,15 +1,6 @@
+#include "base.h"
 #include <SDL3/SDL.h>
 #include <stdlib.h>
-
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-
-typedef uint8_t i8;
-typedef uint16_t i16;
-typedef uint32_t i32;
-typedef uint64_t i64;
 
 const u16 WIDTH = 800;
 const u16 HEIGHT = 600;
@@ -19,7 +10,7 @@ static SDL_Renderer *renderer;
 static SDL_Texture *texture;
 static SDL_FRect textureRect;
 
-void init_sdl() {
+static void init_sdl() {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Could not initialise SDL, error %s", SDL_GetError());
         abort();
@@ -49,14 +40,14 @@ void init_sdl() {
     }
 }
 
-void quit_sdl() {
+static void quit_sdl() {
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-void main_loop() {
+static void main_loop() {
     bool run = true;
     SDL_Event event;
     while (run) {
@@ -72,6 +63,9 @@ void main_loop() {
             SDL_Log("Could not lock texture, error %s", SDL_GetError());
             abort();
         }
+
+        fill_texture(pixels);
+
         for (int i = 0; i < WIDTH; ++i) {
             pixels[i] = 0xFFFFFF00;
         }
