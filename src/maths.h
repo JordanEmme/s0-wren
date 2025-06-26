@@ -15,6 +15,11 @@ typedef struct vec2 {
     float y;
 } vec2;
 
+typedef struct int2 {
+    int i;
+    int j;
+} int2;
+
 typedef struct Vertex {
     vec3 pos;
     vec2 tex;
@@ -30,5 +35,8 @@ typedef struct Mesh {
 } Mesh;
 
 Vertex get_vert(const Mesh *mesh, u16 vertIdx);
+void get_tri(const Mesh *mesh, u16 triIdx, Vertex triBuff[3]);
+vec3 add(vec3 u, vec3 v);
+vec3 sub(vec3 u, vec3 v);
 
 #endif  //MATHS_H

@@ -1,9 +1,8 @@
 #include "base.h"
+#include "const.h"
+#include "sowren.h"
 #include <SDL3/SDL.h>
 #include <stdlib.h>
-
-const u16 WIDTH = 800;
-const u16 HEIGHT = 600;
 
 static SDL_Window *window;
 static SDL_Renderer *renderer;
@@ -11,15 +10,18 @@ static SDL_Texture *texture;
 static SDL_FRect textureRect;
 
 static void init_sdl() {
+    SDL_Log("Initialising SDL:\n");
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("Could not initialise SDL, error %s", SDL_GetError());
+        SDL_Log("\tCould not initialise SDL, error %s", SDL_GetError());
         abort();
     }
+    SDL_Log("\tInitialised SDL video\n");
 
     if (!SDL_CreateWindowAndRenderer("s0-wren", WIDTH, HEIGHT, 0, &window, &renderer)) {
-        SDL_Log("Could not create a window and renderer, error %s", SDL_GetError());
+        SDL_Log("\tCould not create a window and renderer, error %s", SDL_GetError());
         abort();
     }
+    SDL_Log("\tCreated SDL Window and Renderer\n");
 
     texture = SDL_CreateTexture(
         renderer,
@@ -35,9 +37,10 @@ static void init_sdl() {
     textureRect.h = HEIGHT;
 
     if (!texture) {
-        SDL_Log("Could not create a texture, error %s", SDL_GetError());
+        SDL_Log("\tCould not create a texture, error %s", SDL_GetError());
         abort();
     }
+    SDL_Log("\tSDL Texture created successfully\n");
 }
 
 static void quit_sdl() {
@@ -64,11 +67,8 @@ static void main_loop() {
             abort();
         }
 
-        fill_texture(pixels);
+        sowren_update(pixels);
 
-        for (int i = 0; i < WIDTH; ++i) {
-            pixels[i] = 0xFFFFFF00;
-        }
         SDL_UnlockTexture(texture);
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, texture, NULL, &textureRect);
@@ -78,9 +78,11 @@ static void main_loop() {
 
 int main() {
     init_sdl();
+    sowren_init();
 
     main_loop();
 
+    sowren_quit();
     quit_sdl();
     return 0;
 }
