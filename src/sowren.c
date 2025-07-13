@@ -10,7 +10,6 @@
 static u32 *texels = NULL;
 static float *zBuff;
 static Mesh cube = {NULL, NULL, 0, 0};
-static Vertex triBuff[3];
 static int2 projTriBuff[3];
 
 static void init_mesh() {
@@ -39,8 +38,8 @@ static void init_mesh() {
     /* Assign vertex values */
     cube.vertTex[0] = (vec2) {.x = 0.f, .y = 0.f};
     cube.vertTex[1] = (vec2) {.x = 1.f, .y = 0.f};
-    cube.vertTex[2] = (vec2) {.x = 0.f, .y = 1.f};
-    cube.vertTex[3] = (vec2) {.x = 1.f, .y = 1.f};
+    cube.vertTex[2] = (vec2) {.x = 1.f, .y = 1.f};
+    cube.vertTex[3] = (vec2) {.x = 0.f, .y = 1.f};
 
     // clang-format off
     cube.vertPos[0] = (vec3) {.x = -0.5f, .y = -0.5f, .z = 1.5f};
@@ -55,31 +54,33 @@ static void init_mesh() {
 
     int offset = 0;
 
-    cube.tris[offset++] = (1 << 16) + 1;
     cube.tris[offset++] = (0 << 16) + 0;
     cube.tris[offset++] = (2 << 16) + 2;
+    cube.tris[offset++] = (1 << 16) + 1;
 
     cube.tris[offset++] = (2 << 16) + 2;
     cube.tris[offset++] = (0 << 16) + 0;
     cube.tris[offset++] = (3 << 16) + 3;
 
+    // clang-format off
     for (int i = 0; i < 4; ++i) {
-        cube.tris[offset++] = (i << 16) + 0;
-        cube.tris[offset++] = (((i + 1) & 3) << 16) + 1;
-        cube.tris[offset++] = ((i + 4) << 16) + 2;
+        cube.tris[offset++] = (i << 16)                   + 0;
+        cube.tris[offset++] = ((((i + 1) & 3) + 4) << 16) + 2;
+        cube.tris[offset++] = ((i + 4) << 16)             + 1;
 
-        cube.tris[offset++] = (i << 16) + 0;
-        cube.tris[offset++] = (((i + 1) & 3) << 16) + 1;
-        cube.tris[offset++] = ((((i + 1) & 3) + 4) << 16) + 3;
+        cube.tris[offset++] = ((((i + 1) & 3) + 4) << 16) + 2;
+        cube.tris[offset++] = (i << 16)                   + 0;
+        cube.tris[offset++] = (((i + 1) & 3) << 16)       + 3;
     }
+    // clang-format on
 
-    cube.tris[offset++] = (4 << 16) + 0;
-    cube.tris[offset++] = (5 << 16) + 1;
-    cube.tris[offset++] = (6 << 16) + 2;
-
-    cube.tris[offset++] = (6 << 16) + 2;
+    cube.tris[offset++] = (5 << 16) + 0;
+    cube.tris[offset++] = (7 << 16) + 2;
     cube.tris[offset++] = (4 << 16) + 1;
-    cube.tris[offset++] = (7 << 16) + 3;
+
+    cube.tris[offset++] = (7 << 16) + 2;
+    cube.tris[offset++] = (5 << 16) + 0;
+    cube.tris[offset++] = (6 << 16) + 3;
 }
 
 static void init_texels() {
@@ -166,8 +167,9 @@ static inline vec3 bary_coords(int2 a, int2 b, int2 c, int2 p, float triAreaInv)
     return result;
 }
 
-static void render_mesh(u32 *const frameBuff) {
+static void render_mesh(u32 *const frameBuff, int txtWidth) {
     for (u16 triIdx = 0; triIdx < cube.nTris; ++triIdx) {
+        Vertex triBuff[3];
         get_tri(&cube, triIdx, triBuff);
 
         int2 pixMin = {.i = HEIGHT, .j = WIDTH};
@@ -251,9 +253,9 @@ static void render_mesh(u32 *const frameBuff) {
 
 static void rotate_mesh() {
     static const vec3 centre = {0.f, 0.f, 2.f};
-    const float cosZ = 0.01f;
+    const float cosZ = cos(3.14 / 120);
     const float sinZ = sqrtf(1 - cosZ * cosZ);
-    const float cosY = 0.03f;
+    const float cosY = cos(3.14 / 200);
     const float sinY = sqrtf(1 - cosY * cosY);
     for (int i = 0; i < cube.nPos; i++) {
         vec3 pos = cube.vertPos[i];
@@ -291,9 +293,9 @@ void sowren_init() {
     SDL_Log("\tz-buffer initialised\n");
 }
 
-void sowren_update(u32 *const frameBuff) {
-    memset(frameBuff, 0, (sizeof(*frameBuff) * HEIGHT * WIDTH));
-    render_mesh(frameBuff);
+void sowren_update(u32 *const frameBuff, int txtWidth) {
+    memset(frameBuff, 0, (sizeof(*frameBuff) * HEIGHT * txtWidth));
+    render_mesh(frameBuff, txtWidth);
     rotate_mesh();
 
     /* Reinitialise z-buffer for next frame */

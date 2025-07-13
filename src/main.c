@@ -1,13 +1,16 @@
-#include "base.h"
 #include "const.h"
 #include "sowren.h"
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_render.h>
 #include <stdlib.h>
 
 static SDL_Window *window;
 static SDL_Renderer *renderer;
 static SDL_Texture *texture;
 static SDL_FRect textureRect;
+static const u32 PIXEL_FORMAT = SDL_PIXELFORMAT_RGBA32;
+static const u16 BYTES_PER_PIX = SDL_BYTESPERPIXEL(PIXEL_FORMAT);
 
 static void init_sdl() {
     SDL_Log("Initialising SDL:\n");
@@ -23,13 +26,9 @@ static void init_sdl() {
     }
     SDL_Log("\tCreated SDL Window and Renderer\n");
 
-    texture = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA32,
-        SDL_TEXTUREACCESS_STREAMING,
-        WIDTH,
-        HEIGHT
-    );
+    SDL_SetRenderVSync(renderer, 1);
+
+    texture = SDL_CreateTexture(renderer, PIXEL_FORMAT, SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
 
     textureRect.x = 0;
     textureRect.y = 0;
@@ -66,8 +65,8 @@ static void main_loop() {
             SDL_Log("Could not lock texture, error %s", SDL_GetError());
             abort();
         }
-
-        sowren_update(pixels);
+        int txtWidth = pitch / BYTES_PER_PIX;
+        sowren_update(pixels, txtWidth);
 
         SDL_UnlockTexture(texture);
         SDL_RenderClear(renderer);
@@ -76,7 +75,7 @@ static void main_loop() {
     }
 }
 
-int main() {
+int main(int argc, char **argv) {
     init_sdl();
     sowren_init();
 

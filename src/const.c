@@ -17,9 +17,9 @@ const float NEAR_PLANE_Z = -0.1f;
 /* Colours */
 const u32 BLACK = 0xFF000000;
 const u32 WHITE = 0xFFFFFFFF;
-const u32 RED   = 0xFF0000FF;
+const u32 RED = 0xFF0000FF;
 const u32 GREEN = 0xFF00FF00;
-const u32 BLUE  = 0xFFFF0000;
+const u32 BLUE = 0xFFFF0000;
 
 /* Texture Constants */
 const u16 TEXTURE_SIZE = 128;

@@ -4,6 +4,6 @@
 #include "base.h"
 
 void sowren_init();
-void sowren_update(u32 *const frameBuff);
+void sowren_update(u32 *const frameBuff, int txtWidth);
 void sowren_quit();
 #endif  // SOWREN_H

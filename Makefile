@@ -4,20 +4,19 @@ CFLAGS=-std=c99 -c -g -Wall -Werror
 LDFLAGS=-lSDL3 -lm
 OBJS=build/main.o build/maths.o build/sowren.o build/const.o
 
-
 $(NAME): $(OBJS)
 	$(CC) $(LDFLAGS) $(OBJS) -o $@
 
-build/main.o: src/main.c src/base.h src/const.h build
+build/main.o: src/main.c build
 	$(CC) $(CFLAGS) $< -o $@ 
 
-build/maths.o: src/maths.c src/maths.h src/base.h src/const.h build
+build/maths.o: src/maths.c  build
 	$(CC) $(CFLAGS) $< -o $@ 
 
-build/sowren.o: src/sowren.c src/sowren.h src/base.h src/const.h build
+build/sowren.o: src/sowren.c build
 	$(CC) $(CFLAGS) $< -o $@ 
 
-build/const.o: src/const.c src/base.h build
+build/const.o: src/const.c build
 	$(CC) $(CFLAGS) $< -o $@ 
 
 build:

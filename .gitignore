@@ -2,8 +2,11 @@
 .cache/
 compile_commands.json
 
-#bin
+# debugger
+.vscode/
+
+# bin
 s0-wren
 
-#build
+# build
 build/
